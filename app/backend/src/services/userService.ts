@@ -20,4 +20,15 @@ export default class UserService {
 
     return token;
   }
+
+  static async validate(token: string | undefined): Promise<string> {
+    if (!token) {
+      throw new CustomError('UnauthorizedError', 'Authorization Error');
+    }
+    const validateToken = JwtService.validate(token);
+    const { email } = validateToken;
+    const getUser = await User.findOne({ where: { email } });
+    if (!getUser) throw new CustomError('UnauthorizedError', 'Incorrect email or password');
+    return getUser.role;
+  }
 }

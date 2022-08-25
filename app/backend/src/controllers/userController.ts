@@ -8,4 +8,10 @@ export default class UserController {
     const token = await UserService.login(validatedLogin);
     res.status(200).json({ token });
   }
+
+  static async validate(req: Request, res: Response): Promise<void> {
+    // const { authorization } = req.headers;
+    const role = await UserService.validate(req.headers.authorization);
+    res.status(200).json({ role });
+  }
 }
