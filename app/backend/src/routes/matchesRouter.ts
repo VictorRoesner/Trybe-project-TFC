@@ -4,6 +4,6 @@ import matchController from '../controllers/matchController';
 const router = Router();
 
 router.get('/', (req, res) => matchController.getAll(req, res));
-// router.get('/:id', (req, res) => matchController.getById(req, res));
+router.post('/', (req, res) => matchController.create(req, res));
 
 export default router;
