@@ -35,4 +35,10 @@ export default class MatchService {
     });
     return match;
   }
+
+  static async finish(id: number): Promise<void> {
+    await Match.update({
+      inProgress: false,
+    }, { where: { id } });
+  }
 }

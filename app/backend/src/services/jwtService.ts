@@ -12,7 +12,7 @@ export default class JwtService {
       const verifiedToken = jwt.verify(token, 'jwt_secret');
       return verifiedToken as IPayload;
     } catch (err) {
-      throw new CustomError('UnauthorizedError', 'Expired or invalid token');
+      throw new CustomError('UnauthorizedError', 'Token must be a valid token');
     }
   }
 }
