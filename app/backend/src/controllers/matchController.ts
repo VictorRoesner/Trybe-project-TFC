@@ -32,4 +32,11 @@ export default class matchController {
     await MatchService.finish(Number(id));
     res.status(200).json({ message: 'Finished' });
   }
+
+  static async update(req: Request, res: Response) : Promise<void> {
+    const { id } = req.params;
+    const { homeTeamGoals, awayTeamGoals } = req.body;
+    await MatchService.update(Number(id), Number(homeTeamGoals), Number(awayTeamGoals));
+    res.status(200).json({ message: 'Updated' });
+  }
 }
