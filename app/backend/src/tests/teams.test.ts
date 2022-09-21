@@ -15,6 +15,11 @@ const teamMock: ITeam = {
   teamName: "Avaí/Kindermann"
 }
 
+const wrongTeam: ITeam = {
+  id:99,
+  teamName: "Chicago Bulls"
+}
+
 const teamsMock: ITeam[] = [
   {
     id: 1,
@@ -47,7 +52,7 @@ describe('Test endpoint Teams', () => {
       const response = await chai.request(app)
         .get('/teams')
         expect(response.status).to.equal(200)
-        expect(response.body).to.deep.equal(teamsMock)
+        expect(response.body).to.deep.equal([teamMock])
     })
 
     it('team should have name and id attributes', async () => {
@@ -69,6 +74,16 @@ describe('Test endpoint Teams', () => {
 
       expect(response.status).to.equal(200)
       expect(response.body).to.deep.equal(teamMock)
+
+      sinon.restore();
+    })
+
+    it('should return status 401 if not found', async () => {
+      sinon.stub(Team, "findByPk").resolves(wrongTeam as Team)
+       const response = await chai.request(app).get('/teams/1')
+
+      expect(response.status).to.equal(401)
+      expect(response.body).to.have.property('message');
 
       sinon.restore();
     })

@@ -33,11 +33,15 @@ const userMock : IUser = {
   role: 'admin',
 }
 
+const tokenMock = {
+  authorization: "tokenmock"
+}
+
 describe('POST /login', () => {
   describe('Successful Login', () => {
 
     beforeEach(() => {
-      sinon.stub(JwtService, "sign").returns('mock-token');
+      sinon.stub(JwtService, "sign").returns("mock-token");
       sinon.stub(User, "findOne").resolves(userMock as User);
     })
 
@@ -51,9 +55,11 @@ describe('POST /login', () => {
       .send(loginMock)
 
       const token = response.body.token as string;
+      console.log(token);
+      
 
       expect(response.status).to.eq(200)
-      expect(token).to.be.eq('mock-token')
+      expect(token).to.be.eq("mock-token")
     })
   })
   describe('Failed Login', () => {
@@ -81,5 +87,30 @@ describe('POST /login', () => {
       expect(response.body).to.have.property('message');
       expect(response.body.message).to.be.equal('Incorrect email or password');
     })
+
   })
+
+  describe('Test login validate', () => {
+    it('return valid token', async () => {
+      sinon.stub(User, 'findByPk').resolves(userMock as User);
+
+      const response = await chai.request(app)
+        .get('/login/validate')
+        .set('authorization', tokenMock.authorization);
+      expect(response.status).to.eq(200);
+      expect(response.body.role).to.be.equal('admin')
+      sinon.restore();
+    })
+
+    it('Returne invalid token 401', async () => {
+      sinon.stub(User, 'findByPk').resolves(undefined);
+
+      const response = await chai.request(app)
+        .get('/login/validate')
+        .set('authorization', 'wrongtoken');
+ 
+      expect(response.body).to.be.equal('')
+      sinon.restore();
+    })
+  });
 });
